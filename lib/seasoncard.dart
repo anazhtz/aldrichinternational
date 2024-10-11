@@ -1,13 +1,16 @@
-// SessionCard widget
 import 'package:flutter/material.dart';
 
 class SessionCard extends StatelessWidget {
-  final Color borderColor; // New parameter for border color
+  final Color borderColor;   // Parameter for border color
+  final Color textColor;     // Parameter for speaker name text color
+  final Color textColortime; // Parameter for time text color
 
-  const SessionCard(
-      {super.key,
-      this.borderColor =
-          const Color.fromARGB(255, 129, 60, 5)}); // Default to brown
+  const SessionCard({
+    super.key,
+    this.borderColor = const Color.fromARGB(255, 129, 60, 5), // Default brown
+    this.textColor = const Color.fromARGB(255, 129, 60, 5),  // Default brown for text
+    required this.textColortime,  // Time text color must be passed
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +20,12 @@ class SessionCard extends StatelessWidget {
       padding: const EdgeInsets.all(12.0), // Adjust padding for a neater look
       decoration: BoxDecoration(
         border: Border.all(
-          color: borderColor, // Use the passed color
+          color: borderColor, // Use the passed color for the border
           width: 1.5, // Border thickness
         ),
         borderRadius: BorderRadius.circular(10), // Rounded corners
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -37,12 +40,11 @@ class SessionCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 18, // Slightly bigger text for speaker name
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(
-                            255, 129, 60, 5), // Brown color for title
+                        color: textColor, // Use the passed text color
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       'Ensuring a Predictable Plant By Implementing Proper Asset Performance Management',
                       style: TextStyle(
                         fontSize: 14, // Adjust text size for subtitle
@@ -51,21 +53,20 @@ class SessionCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       '9:30AM TO 10:00AM',
                       style: TextStyle(
                         fontSize: 14,
-                        color:
-                            Color.fromARGB(255, 162, 76, 5), // Orange time text
+                        color: textColortime, // Use the passed time text color
                         fontWeight: FontWeight.w500, // Bold for emphasis
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(width: 10),
-              CircleAvatar(
+              const SizedBox(width: 10),
+              const CircleAvatar(
                 radius: 40, // Adjust radius to make the avatar smaller
                 backgroundImage: AssetImage('images/Ellipse 4.png'),
               ),
@@ -76,6 +77,7 @@ class SessionCard extends StatelessWidget {
     );
   }
 }
+
 
 // SponsorLogo widget
 class SponsorLogo extends StatelessWidget {

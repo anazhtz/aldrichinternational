@@ -299,8 +299,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   children: [
-                    SessionCard(), // Default brown border
-                    SessionCard(borderColor: Colors.teal), // Teal border
+                    SessionCard(
+                      textColortime: Color.fromARGB(
+                          255, 162, 55, 5), // Orange for the time text
+                    ), // Default brown border and brown text
+                    SessionCard(
+                      borderColor: Colors.teal, // Teal border
+                      textColor: Colors.teal, // Teal speaker name
+                      textColortime: Colors.teal, // Teal time text
+                    ),
                   ],
                 ),
               ),
@@ -407,6 +414,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-
