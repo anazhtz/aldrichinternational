@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aldrichinternational/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -13,6 +14,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final List<String> bannerImages = [
+    'images/Rectangle 5.png',
+    'images/Rectangle 5.png',
+    'images/Rectangle 5.png',
     'images/Rectangle 5.png',
     // Add more image URLs here
   ];
@@ -88,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Custom Top Bar with Search
               Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,20 +101,87 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(left: 5),
                       child: Image.asset(
                         'images/Screenshot 2024-10-11 105039.png',
-                        width: 100,
-                        height: 100,
+                        width: 180, // Increased width (e.g., 180)
+                        height: 180, // Increased height (e.g., 180)
                         fit: BoxFit.contain,
                       ),
                     ),
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled:
+                                  true, // Allows full-screen modal sheet
+                              backgroundColor:
+                                  Colors.transparent, // Transparent background
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.5, // Adjust as needed
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        Color(0xFF009688), // Starting color
+                                        Color(0xFF4CAF50), // Ending color
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30),
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      // Exit icon in the top-left
+                                      Positioned(
+                                        top: 20,
+                                        left: 20,
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the modal sheet
+                                          },
+                                        ),
+                                      ),
+
+                                      // Center badge icon
+                                      Center(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                Colors.white.withOpacity(0.8),
+                                          ),
+                                          padding: const EdgeInsets.all(20),
+                                          child: const Icon(
+                                            Icons.badge,
+                                            color: Colors.teal,
+                                            size: 60, // Adjust size as needed
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
                           child: Image.asset(
                             "images/Frame 28.png",
+                            width: 40, // Increased size (e.g., 40)
+                            height: 40, // Increased size (e.g., 40)
                           ),
                         ),
                         IconButton(
+                          iconSize: 30, // Increased icon size
                           icon: const Icon(
                             Icons.notifications,
                             color: Color.fromARGB(252, 121, 42, 5),
@@ -118,14 +189,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {},
                         ),
                         GestureDetector(
-                            onTap: () {},
-                            child: Image.asset("images/Frame 26.png"))
+                          onTap: () {},
+                          child: Image.asset(
+                            "images/Frame 26.png",
+                            width: 40, // Increased size (e.g., 40)
+                            height: 40, // Increased size (e.g., 40)
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
               ),
 
+              // Timed Image Carousel
               // Timed Image Carousel
               Column(
                 children: [
@@ -143,27 +220,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     items: bannerImages.map((image) {
                       return Builder(
                         builder: (BuildContext context) {
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              image,
-                              fit: BoxFit.cover,
-                              width: 1000,
-                            ),
+                          return Image.asset(
+                            image,
+                            fit: BoxFit.fill,
+                            width: 1000,
                           );
                         },
                       );
                     }).toList(),
                   ),
+                  const SizedBox(height: 5),
                   // Dot Indicator
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       bannerImages.length,
-                      (index) => Container(
+                      (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        width: 8.0,
-                        height: 8.0,
+                        width: _currentIndex == index
+                            ? 12.0
+                            : 8.0, // Increase size for active dot
+                        height: _currentIndex == index
+                            ? 12.0
+                            : 8.0, // Increase size for active dot
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _currentIndex == index
@@ -272,42 +352,50 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // Floating Action Button
-      floatingActionButton: Container(
-        width: 70,
-        height: 70,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.teal,
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            // Action for QR code scanner button
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.qr_code_scanner, color: Colors.white),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+  // Floating Action Button
+floatingActionButton: Container(
+  width: 70,
+  height: 70,
+  decoration: const BoxDecoration(
+    shape: BoxShape.circle,
+    color: Colors.teal,
+  ),
+  child: FloatingActionButton(
+    onPressed: () {
+      // Action for QR code scanner button
+    },
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+  ),
+),
+floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // Bottom Navigation Bar
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        icons: iconList,
-        activeIndex: _currentIndex,
-        backgroundColor: const Color.fromARGB(192, 110, 36, 4),
-        activeColor: Colors.white,
-        inactiveColor: Colors.white,
-        gapLocation: GapLocation.center,
-        notchSmoothness: NotchSmoothness.softEdge,
-        leftCornerRadius: 0,
-        rightCornerRadius: 0,
-        onTap: (index) {
-          setState(() {
-            _currentIndex =
-                index; // Update the current index when an icon is tapped
-          });
-        },
-      ),
+// Bottom Navigation Bar
+bottomNavigationBar: AnimatedBottomNavigationBar(
+  icons: iconList,
+  activeIndex: _currentIndex,
+  backgroundColor: const Color.fromARGB(192, 110, 36, 4),
+  activeColor: Colors.white,
+  inactiveColor: Colors.white,
+  gapLocation: GapLocation.center,
+  notchSmoothness: NotchSmoothness.softEdge,
+  leftCornerRadius: 0,
+  rightCornerRadius: 0,
+  onTap: (index) {
+    setState(() {
+      _currentIndex = index; // Update the current index when an icon is tapped
+
+      if (index == 1) { // Assuming the search icon is at index 1
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FloorPlanScreen()),
+        );
+      }
+    });
+  },
+),
+
     );
   }
 }
@@ -398,7 +486,7 @@ class SponsorLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(0.0),
       child: Image.asset(
         assetName,
         fit: BoxFit.contain,
