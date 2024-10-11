@@ -1,227 +1,373 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
   final List<String> bannerImages = [
-    'https://s3-alpha-sig.figma.com/img/4fe4/842b/797e53367290d82bbac1abb75090be9b?Expires=1729468800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=HrHROzdV4K7AwixlyE9sG~CJ1d-v8D9bEK4Dxg5plfotodmS9lspm0pN6xklW~vksVl1YgOHc5U-HWXfm4zLVWdVPz2Mplr39V-muJpSkR6q9LkUkhOuI99Sya83clk~y~sG6nxetwHXJAT8k0wVi7SRwQOxrEq3k4v1haksOKis2PPvNfzyIK8sMRP9xjinInDBG9FJk10ZoBU6FgTIXwmESUEfq5Iru7deFlhOCnLhFgkZENYUXrwi-m2G5ye69H9dyD8ZEQyzlPg48xcyG9Dy7goc2cpANOJNvWRsyCGR~HduPtI~HSd5VR2nPKAJXC-nrvTCg2d4fYVAaLW5Gg__',
+    'images/Rectangle 5.png',
     // Add more image URLs here
   ];
 
-  int _currentIndex = 0; // Track the current index of the carousel
-  final CarouselController _controller = CarouselController(); // Carousel controller
+  List<IconData> iconList = [
+    Icons.home,
+    Icons.search,
+    Icons.message,
+    Icons.person,
+  ];
+
+  late PageController _pageController;
+  Timer? _timer;
+
+  final List<String> sponsorImages = [
+    'images/Group 2334.png',
+    'images/Group 2335.png',
+    'images/Group 2338.png',
+    'images/Group 2337.png',
+    'images/Group 2334.png',
+    'images/Group 2335.png',
+    'images/Group 2338.png',
+    'images/Group 2337.png',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController =
+        PageController(viewportFraction: 0.2); // Adjusts the width of each item
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (_pageController.hasClients) {
+        int nextPage = (_currentIndex + 1) % sponsorImages.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        setState(() {
+          _currentIndex = nextPage;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        toolbarHeight: 50,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'images/Screenshot 2024-10-11 105039.png', // Your logo asset
-            fit: BoxFit.contain,
-          ),
-        ),
-        actions: [
-          IconButton(icon: const Icon(Icons.qr_code_scanner), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.settings), onPressed: () {}),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timed Image Carousel
-            Column(
-              children: [
-                CarouselSlider(
-                  options: CarouselOptions(
-                    height: 200.0,
-                    autoPlay: true, // Automatic image change
-                    enlargeCenterPage: true,
-                    autoPlayInterval: const Duration(seconds: 5), // Time between images
-                    viewportFraction: 0.9, // Adjusts the size of the image displayed
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentIndex = index; // Update the current index
-                      });
-                    },
-                  ),
-                  carouselController: _controller,
-                  items: bannerImages.map((image) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(15), // Rounded corners
-                          child: Image.network(
-                            image,
-                            fit: BoxFit.cover, // Makes sure image fills the space
-                            width: 1000,
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
-
-                // Dots Indicator
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(bannerImages.length, (index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                      height: 8.0,
-                      width: 8.0,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _currentIndex == index ? Colors.teal : Colors.grey,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Custom Top Bar with Search
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5),
+                      child: Image.asset(
+                        'images/Screenshot 2024-10-11 105039.png',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.contain,
                       ),
-                    );
-                  }),
+                    ),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Image.asset(
+                            "images/Frame 28.png",
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications,
+                            color: Color.fromARGB(252, 121, 42, 5),
+                          ),
+                          onPressed: () {},
+                        ),
+                        GestureDetector(
+                            onTap: () {},
+                            child: Image.asset("images/Frame 26.png"))
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
 
-            // Other content like "Upcoming Sessions"
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Upcoming sessions',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  TextButton(
-                      onPressed: () {},
-                      child: const Text('View Agenda', style: TextStyle(color: Colors.teal))),
-                ],
+              // Timed Image Carousel
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200.0,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  autoPlayInterval: const Duration(seconds: 5),
+                  viewportFraction: 0.9,
+                ),
+                items: bannerImages.map((image) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.asset(
+                          image,
+                          fit: BoxFit.cover,
+                          width: 1000,
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
               ),
-            ),
-            const SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  SessionCard(),
-                  SessionCard(),
-                ],
-              ),
-            ),
 
-            // Sponsors & Partners
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Text('Sponsors & Partners',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SponsorLogo(),
-                  SponsorLogo(),
-                  SponsorLogo(),
-                ],
+              // Upcoming Sessions
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Upcoming sessions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 129, 60, 5),
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'View Agenda',
+                          style: TextStyle(
+                            color: Colors.teal,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.arrow_right,
+                            color: Colors.teal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            // Day 1 Highlights
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: Text('DAY 1 Highlights',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16.0),
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
+              const SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    SessionCard(), // Default brown border
+                    SessionCard(borderColor: Colors.teal), // Teal border
+                  ],
+                ),
               ),
-            ),
-          ],
+
+              // Sponsors & Partners
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Text(
+                  'Sponsors & Partners',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 129, 60, 5),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 70, // Adjust height for the sponsor section
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: sponsorImages.length,
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 150, // Set specific width for each logo container
+                      child: SponsorLogo(assetName: sponsorImages[index]),
+                    );
+                  },
+                ),
+              ),
+
+              // Day 1 Highlights
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Text(
+                  'DAY 1 Highlights',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          const BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-          const BottomNavigationBarItem(icon: Icon(Icons.search), label: ''),
-          BottomNavigationBarItem(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.teal,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(Icons.qr_code_scanner, color: Colors.white),
-            ),
-            label: '',
-          ),
-          const BottomNavigationBarItem(icon: Icon(Icons.message), label: ''),
-          const BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-        ],
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.brown,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
+
+      // Floating Action Button
+      floatingActionButton: Container(
+        width: 70,
+        height: 70,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.teal,
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            // Action for QR code scanner button
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
+      // Bottom Navigation Bar
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+        icons: iconList,
+        activeIndex: _currentIndex,
+        backgroundColor: const Color.fromARGB(192, 110, 36, 4),
+        activeColor: Colors.white,
+        inactiveColor: Colors.white,
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.softEdge,
+        leftCornerRadius: 0,
+        rightCornerRadius: 0,
+        onTap: (index) {
+          setState(() {
+            _currentIndex =
+                index; // Update the current index when an icon is tapped
+          });
+        },
       ),
     );
   }
 }
 
-// Placeholder widget for session cards
+// SessionCard widget
 class SessionCard extends StatelessWidget {
-  const SessionCard({super.key});
+  final Color borderColor; // New parameter for border color
+
+  const SessionCard(
+      {super.key,
+      this.borderColor =
+          const Color.fromARGB(255, 129, 60, 5)}); // Default to brown
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
+      width: 350, // Adjust width to match the design
       margin: const EdgeInsets.only(right: 16.0),
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(12.0), // Adjust padding for a neater look
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: borderColor, // Use the passed color
+          width: 1.5, // Border thickness
+        ),
+        borderRadius: BorderRadius.circular(10), // Rounded corners
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
-            backgroundImage: NetworkImage('https://via.placeholder.com/100'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Speaker name',
+                      style: TextStyle(
+                        fontSize: 18, // Slightly bigger text for speaker name
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(
+                            255, 129, 60, 5), // Brown color for title
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      'Ensuring a Predictable Plant By Implementing Proper Asset Performance Management',
+                      style: TextStyle(
+                        fontSize: 14, // Adjust text size for subtitle
+                        color: Colors.black, // Standard dark color for text
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '9:30AM TO 10:00AM',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color:
+                            Color.fromARGB(255, 162, 76, 5), // Orange time text
+                        fontWeight: FontWeight.w500, // Bold for emphasis
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 10),
+              CircleAvatar(
+                radius: 35, // Adjust radius to make the avatar smaller
+                backgroundImage: AssetImage('images/Ellipse 4.png'),
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          const Text('Speaker name',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 5),
-          const Text(
-              'Ensuring a Predictable Plant By Implementing Proper Asset Performance Management'),
-          const SizedBox(height: 5),
-          Text('9:30AM TO 10:00AM',
-              style: TextStyle(color: Colors.grey.shade700)),
         ],
       ),
     );
   }
 }
 
-// Placeholder widget for sponsor logos
 class SponsorLogo extends StatelessWidget {
-  const SponsorLogo({super.key});
+  final String assetName;
+
+  const SponsorLogo({super.key, required this.assetName});
 
   @override
   Widget build(BuildContext context) {
-    return Image.network('https://via.placeholder.com/80x40'); // Sponsor logo
+    return Image.asset(
+      assetName,
+      height: 50, // Adjust height to fit the design
+      fit: BoxFit.contain,
+    );
   }
 }
