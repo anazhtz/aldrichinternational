@@ -1,4 +1,4 @@
-import 'package:aldrichinternational/homescreen.dart';
+
 import 'package:aldrichinternational/splashscreen.dart';
 import 'package:flutter/material.dart';
 

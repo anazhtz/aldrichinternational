@@ -69,6 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  // This method updates the current index when the page changes
+  void _onCarouselChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,28 +127,53 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
 
               // Timed Image Carousel
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 200.0,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  autoPlayInterval: const Duration(seconds: 5),
-                  viewportFraction: 0.9,
-                ),
-                items: bannerImages.map((image) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.asset(
-                          image,
-                          fit: BoxFit.cover,
-                          width: 1000,
-                        ),
+              Column(
+                children: [
+                  CarouselSlider(
+                    options: CarouselOptions(
+                      height: 200.0,
+                      autoPlay: true,
+                      enlargeCenterPage: true,
+                      autoPlayInterval: const Duration(seconds: 5),
+                      viewportFraction: 0.9,
+                      onPageChanged: (index, reason) {
+                        _onCarouselChanged(index); // Update current index
+                      },
+                    ),
+                    items: bannerImages.map((image) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(15),
+                            child: Image.asset(
+                              image,
+                              fit: BoxFit.cover,
+                              width: 1000,
+                            ),
+                          );
+                        },
                       );
-                    },
-                  );
-                }).toList(),
+                    }).toList(),
+                  ),
+                  // Dot Indicator
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      bannerImages.length,
+                      (index) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                        width: 8.0,
+                        height: 8.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _currentIndex == index
+                              ? Colors.teal
+                              : Colors.grey, // Active dot color
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               // Upcoming Sessions
@@ -243,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Container(
         width: 70,
         height: 70,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.teal,
         ),
@@ -357,6 +389,7 @@ class SessionCard extends StatelessWidget {
   }
 }
 
+// SponsorLogo widget
 class SponsorLogo extends StatelessWidget {
   final String assetName;
 
@@ -364,10 +397,12 @@ class SponsorLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      assetName,
-      height: 50, // Adjust height to fit the design
-      fit: BoxFit.contain,
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      child: Image.asset(
+        assetName,
+        fit: BoxFit.contain,
+      ),
     );
   }
 }
