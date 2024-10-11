@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:aldrichinternational/search_screen.dart';
+import 'package:aldrichinternational/seasoncard.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -322,9 +323,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: _pageController,
                   itemCount: sponsorImages.length,
                   itemBuilder: (context, index) {
-                    return SizedBox(
-                      width: 150,
-                      child: SponsorLogo(assetName: sponsorImages[index]),
+                    return Container(
+                      margin: const EdgeInsets.symmetric(
+                          horizontal:
+                              8.0), // Add margin to create space between cards
+                      child: SizedBox(
+                        width: 150,
+                        child: SponsorLogo(assetName: sponsorImages[index]),
+                      ),
                     );
                   },
                 ),
@@ -352,145 +358,55 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // Floating Action Button
-  // Floating Action Button
-floatingActionButton: Container(
-  width: 70,
-  height: 70,
-  decoration: const BoxDecoration(
-    shape: BoxShape.circle,
-    color: Colors.teal,
-  ),
-  child: FloatingActionButton(
-    onPressed: () {
-      // Action for QR code scanner button
-    },
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    child: const Icon(Icons.qr_code_scanner, color: Colors.white),
-  ),
-),
-floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // Floating Action Button
+      floatingActionButton: Container(
+        width: 70,
+        height: 70,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.teal,
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            // Action for QR code scanner button
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.qr_code_scanner, color: Colors.white),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
 // Bottom Navigation Bar
-bottomNavigationBar: AnimatedBottomNavigationBar(
-  icons: iconList,
-  activeIndex: _currentIndex,
-  backgroundColor: const Color.fromARGB(192, 110, 36, 4),
-  activeColor: Colors.white,
-  inactiveColor: Colors.white,
-  gapLocation: GapLocation.center,
-  notchSmoothness: NotchSmoothness.softEdge,
-  leftCornerRadius: 0,
-  rightCornerRadius: 0,
-  onTap: (index) {
-    setState(() {
-      _currentIndex = index; // Update the current index when an icon is tapped
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+        icons: iconList,
+        activeIndex: _currentIndex,
+        backgroundColor: const Color.fromARGB(192, 110, 36, 4),
+        activeColor: Colors.white,
+        inactiveColor: Colors.white,
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.softEdge,
+        leftCornerRadius: 0,
+        rightCornerRadius: 0,
+        onTap: (index) {
+          setState(() {
+            _currentIndex =
+                index; // Update the current index when an icon is tapped
 
-      if (index == 1) { // Assuming the search icon is at index 1
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const FloorPlanScreen()),
-        );
-      }
-    });
-  },
-),
-
-    );
-  }
-}
-
-// SessionCard widget
-class SessionCard extends StatelessWidget {
-  final Color borderColor; // New parameter for border color
-
-  const SessionCard(
-      {super.key,
-      this.borderColor =
-          const Color.fromARGB(255, 129, 60, 5)}); // Default to brown
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 350, // Adjust width to match the design
-      margin: const EdgeInsets.only(right: 16.0),
-      padding: const EdgeInsets.all(12.0), // Adjust padding for a neater look
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: borderColor, // Use the passed color
-          width: 1.5, // Border thickness
-        ),
-        borderRadius: BorderRadius.circular(10), // Rounded corners
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Speaker name',
-                      style: TextStyle(
-                        fontSize: 18, // Slightly bigger text for speaker name
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(
-                            255, 129, 60, 5), // Brown color for title
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Ensuring a Predictable Plant By Implementing Proper Asset Performance Management',
-                      style: TextStyle(
-                        fontSize: 14, // Adjust text size for subtitle
-                        color: Colors.black, // Standard dark color for text
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '9:30AM TO 10:00AM',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color:
-                            Color.fromARGB(255, 162, 76, 5), // Orange time text
-                        fontWeight: FontWeight.w500, // Bold for emphasis
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 10),
-              CircleAvatar(
-                radius: 40, // Adjust radius to make the avatar smaller
-                backgroundImage: AssetImage('images/Ellipse 4.png'),
-              ),
-            ],
-          ),
-        ],
+            if (index == 1) {
+              // Assuming the search icon is at index 1
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const FloorPlanScreen()),
+              );
+            }
+          });
+        },
       ),
     );
   }
 }
 
-// SponsorLogo widget
-class SponsorLogo extends StatelessWidget {
-  final String assetName;
 
-  const SponsorLogo({super.key, required this.assetName});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(0.0),
-      child: Image.asset(
-        assetName,
-        fit: BoxFit.contain,
-      ),
-    );
-  }
-}
