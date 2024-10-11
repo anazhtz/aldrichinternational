@@ -237,13 +237,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(
-                height: 70, // Adjust height for the sponsor section
+                height: 50,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: sponsorImages.length,
                   itemBuilder: (context, index) {
                     return SizedBox(
-                      width: 150, // Set specific width for each logo container
+                      width: 150,
                       child: SponsorLogo(assetName: sponsorImages[index]),
                     );
                   },
@@ -378,7 +378,7 @@ class SessionCard extends StatelessWidget {
               ),
               SizedBox(width: 10),
               CircleAvatar(
-                radius: 35, // Adjust radius to make the avatar smaller
+                radius: 40, // Adjust radius to make the avatar smaller
                 backgroundImage: AssetImage('images/Ellipse 4.png'),
               ),
             ],
