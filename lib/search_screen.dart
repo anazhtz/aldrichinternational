@@ -43,7 +43,7 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
             minScale: 0.5, // Minimum zoom out level
             maxScale: 4.0, // Maximum zoom in level
             child: Image.asset(
-                'images/Map Scroll & Zoom.png'), // Replace with your image
+                'images/Map Scroll & Zoom.jpeg'), // Replace with your image
           ),
 
           // Positioned search bar styled similar to the one in the image

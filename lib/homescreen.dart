@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'package:aldrichinternational/search_screen.dart';
-import 'package:aldrichinternational/seasoncard.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:aldrichinternational/agenda.dart';
+import 'package:aldrichinternational/search_screen.dart';
+import 'package:aldrichinternational/seasoncard.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,7 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     'images/Rectangle 5.png',
     'images/Rectangle 5.png',
     'images/Rectangle 5.png',
-    // Add more image URLs here
   ];
 
   List<IconData> iconList = [
@@ -43,11 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
     'images/Group 2337.png',
   ];
 
+  OverlayEntry? _overlayEntry;
+
   @override
   void initState() {
     super.initState();
-    _pageController =
-        PageController(viewportFraction: 0.2); // Adjusts the width of each item
+    _pageController = PageController(viewportFraction: 0.2);
     _startAutoScroll();
   }
 
@@ -71,14 +72,29 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _timer?.cancel();
     _pageController.dispose();
+    _removeOverlay();
     super.dispose();
   }
 
-  // This method updates the current index when the page changes
   void _onCarouselChanged(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  void _showBadgeOverlay() {
+    _removeOverlay();
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => BadgeOverlay(onDismiss: _removeOverlay),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   @override
@@ -102,87 +118,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(left: 5),
                       child: Image.asset(
                         'images/Screenshot 2024-10-11 105039.png',
-                        width: 180, // Increased width (e.g., 180)
-                        height: 180, // Increased height (e.g., 180)
+                        width: 180,
+                        height: 180,
                         fit: BoxFit.contain,
                       ),
                     ),
                     Row(
                       children: [
                         GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled:
-                                  true, // Allows full-screen modal sheet
-                              backgroundColor:
-                                  Colors.transparent, // Transparent background
-                              builder: (BuildContext context) {
-                                return Container(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.5, // Adjust as needed
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xFF009688), // Starting color
-                                        Color(0xFF4CAF50), // Ending color
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(30),
-                                    ),
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      // Exit icon in the top-left
-                                      Positioned(
-                                        top: 20,
-                                        left: 20,
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.close,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the modal sheet
-                                          },
-                                        ),
-                                      ),
-
-                                      // Center badge icon
-                                      Center(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                Colors.white.withOpacity(0.8),
-                                          ),
-                                          padding: const EdgeInsets.all(20),
-                                          child: const Icon(
-                                            Icons.badge,
-                                            color: Colors.teal,
-                                            size: 60, // Adjust size as needed
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                          onTap: _showBadgeOverlay,
                           child: Image.asset(
                             "images/Frame 28.png",
-                            width: 40, // Increased size (e.g., 40)
-                            height: 40, // Increased size (e.g., 40)
+                            width: 40,
+                            height: 40,
                           ),
                         ),
                         IconButton(
-                          iconSize: 30, // Increased icon size
+                          iconSize: 30,
                           icon: const Icon(
                             Icons.notifications,
                             color: Color.fromARGB(252, 121, 42, 5),
@@ -193,8 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {},
                           child: Image.asset(
                             "images/Frame 26.png",
-                            width: 40, // Increased size (e.g., 40)
-                            height: 40, // Increased size (e.g., 40)
+                            width: 40,
+                            height: 40,
                           ),
                         ),
                       ],
@@ -203,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              // Timed Image Carousel
               // Timed Image Carousel
               Column(
                 children: [
@@ -215,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       autoPlayInterval: const Duration(seconds: 5),
                       viewportFraction: 0.9,
                       onPageChanged: (index, reason) {
-                        _onCarouselChanged(index); // Update current index
+                        _onCarouselChanged(index);
                       },
                     ),
                     items: bannerImages.map((image) {
@@ -239,17 +190,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       (index) => AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        width: _currentIndex == index
-                            ? 12.0
-                            : 8.0, // Increase size for active dot
-                        height: _currentIndex == index
-                            ? 12.0
-                            : 8.0, // Increase size for active dot
+                        width: _currentIndex == index ? 12.0 : 8.0,
+                        height: _currentIndex == index ? 12.0 : 8.0,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _currentIndex == index
                               ? Colors.teal
-                              : Colors.grey, // Active dot color
+                              : Colors.grey,
                         ),
                       ),
                     ),
@@ -274,11 +221,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'View Agenda',
-                          style: TextStyle(
-                            color: Colors.teal,
-                            fontWeight: FontWeight.w500,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const AgendaScreen()),
+                            );
+                          },
+                          child: const Text(
+                            'View Agenda',
+                            style: TextStyle(
+                              color: Colors.teal,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         IconButton(
@@ -299,14 +255,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   children: [
-                    SessionCard(
-                      textColortime: Color.fromARGB(
-                          255, 162, 55, 5), // Orange for the time text
-                    ), // Default brown border and brown text
-                    SessionCard(
-                      borderColor: Colors.teal, // Teal border
-                      textColor: Colors.teal, // Teal speaker name
-                      textColortime: Colors.teal, // Teal time text
+                    SessionCards(
+                      textColortime: Color.fromARGB(255, 162, 55, 5),
+                    ),
+                    SessionCards(
+                      borderColor: Colors.teal,
+                      textColor: Colors.teal,
+                      textColortime: Colors.teal,
                     ),
                   ],
                 ),
@@ -331,9 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: sponsorImages.length,
                   itemBuilder: (context, index) {
                     return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal:
-                              8.0), // Add margin to create space between cards
+                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: SizedBox(
                         width: 150,
                         child: SponsorLogo(assetName: sponsorImages[index]),
@@ -363,9 +316,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-
-      // Floating Action Button
-      // Floating Action Button
       floatingActionButton: Container(
         width: 70,
         height: 70,
@@ -383,8 +333,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-// Bottom Navigation Bar
       bottomNavigationBar: AnimatedBottomNavigationBar(
         icons: iconList,
         activeIndex: _currentIndex,
@@ -397,11 +345,8 @@ class _HomeScreenState extends State<HomeScreen> {
         rightCornerRadius: 0,
         onTap: (index) {
           setState(() {
-            _currentIndex =
-                index; // Update the current index when an icon is tapped
-
+            _currentIndex = index;
             if (index == 1) {
-              // Assuming the search icon is at index 1
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -411,6 +356,136 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
       ),
+    );
+  }
+}
+
+class BadgeOverlay extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  const BadgeOverlay({Key? key, required this.onDismiss}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.black.withOpacity(0.5),
+      child: Stack(
+        children: [
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.6,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.brown),
+                          onPressed: onDismiss,
+                        ),
+                        Text(
+                          'Badge',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.brown,
+                          ),
+                        ),
+                        SizedBox(width: 48), // To balance the close button
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFBF6336),
+                            Color(0xFF0D7460),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'TECHNICAL \n CHAIRMAN',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Container(
+                            decoration: BoxDecoration(color: Colors.white),
+                            child: Image.asset(
+                              'images/qrapp.png',
+                              height: 200,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Sharul A. Rashid',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Group Technical Authority & Custodian\nEngineer - Instrument & Control',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'ARAMCO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SponsorLogo extends StatelessWidget {
+  final String assetName;
+
+  const SponsorLogo({Key? key, required this.assetName}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      assetName,
+      fit: BoxFit.contain,
     );
   }
 }

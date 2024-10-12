@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SessionCard extends StatelessWidget {
+class SessionCards extends StatelessWidget {
   final Color borderColor;   // Parameter for border color
   final Color textColor;     // Parameter for speaker name text color
   final Color textColortime; // Parameter for time text color
 
-  const SessionCard({
+  const SessionCards({
     super.key,
     this.borderColor = const Color.fromARGB(255, 129, 60, 5), // Default brown
     this.textColor = const Color.fromARGB(255, 129, 60, 5),  // Default brown for text
