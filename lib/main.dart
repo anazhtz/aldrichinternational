@@ -1,4 +1,5 @@
 
+import 'package:aldrichinternational/search_screen.dart';
 import 'package:aldrichinternational/splashscreen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Splashscreen(), // Start with Splashscreen
+      home: const FloorPlanScreen(), // Start with Splashscreen
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 class FloorPlanScreen extends StatefulWidget {
   const FloorPlanScreen({super.key});
@@ -8,15 +10,63 @@ class FloorPlanScreen extends StatefulWidget {
 }
 
 class _FloorPlanScreenState extends State<FloorPlanScreen> {
-  TransformationController _controller = TransformationController();
-  double _currentScale = 1.0;
+  late GoogleMapController _mapController;
+  final Set<Marker> _markers = {}; // To store markers on the map
+  TextEditingController _searchController = TextEditingController();
+  
+  // Example LatLng coordinates for the center of the map
+  static const LatLng _center = LatLng(37.42796133580664, -122.085749655962);
+
+  // Function to handle map creation
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+
+    // Add a marker at the center position initially
+    setState(() {
+      _markers.add(
+        Marker(
+          markerId: MarkerId('center_marker'),
+          position: _center,
+          infoWindow: InfoWindow(title: 'Center Marker'),
+        ),
+      );
+    });
+  }
+
+  // Function to search and display the location
+  Future<void> _searchLocation(String location) async {
+    List<Location> locations = await locationFromAddress(location);
+    if (locations.isNotEmpty) {
+      // Clear existing markers
+      setState(() {
+        _markers.clear();
+      });
+
+      // Get the first location from the search
+      Location newLocation = locations.first;
+
+      // Move the camera to the new location
+      _mapController.animateCamera(CameraUpdate.newLatLng(
+          LatLng(newLocation.latitude, newLocation.longitude)));
+
+      // Add a marker for the new location
+      setState(() {
+        _markers.add(
+          Marker(
+            markerId: MarkerId('searched_location'),
+            position: LatLng(newLocation.latitude, newLocation.longitude),
+            infoWindow: InfoWindow(title: location),
+          ),
+        );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // Custom back button (left-side arrow)
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -35,15 +85,15 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
       ),
       body: Stack(
         children: [
-          // InteractiveViewer with custom TransformationController
-          InteractiveViewer(
-            transformationController: _controller,
-            panEnabled: true, // Enable panning
-            boundaryMargin: const EdgeInsets.all(8.0),
-            minScale: 0.5, // Minimum zoom out level
-            maxScale: 4.0, // Maximum zoom in level
-            child: Image.asset(
-                'images/Map Scroll & Zoom.jpeg'), // Replace with your image
+          // Google Map widget
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target: _center,
+              zoom: 15.0,
+            ),
+            markers: _markers, // Display markers on the map
+            minMaxZoomPreference: MinMaxZoomPreference(0.5, 4.0), // Set min and max zoom levels
           ),
 
           // Positioned search bar styled similar to the one in the image
@@ -54,16 +104,15 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
+                controller: _searchController, // Set the controller
                 decoration: InputDecoration(
                   hintText: 'Booth Number / Company Name',
-                  hintStyle: const TextStyle(
-                      color: Colors.brown), // Hint text color brown
+                  hintStyle: const TextStyle(color: Colors.brown), // Hint text color brown
                   filled: true,
                   fillColor: Colors.white, // Background color white
                   contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
-                      horizontal:
-                          20), // Added horizontal padding to move hint text inside
+                      horizontal: 20), // Added horizontal padding to move hint text inside
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey.shade400),
                     borderRadius: BorderRadius.circular(8),
@@ -74,8 +123,8 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
                   ),
                 ),
                 onSubmitted: (value) {
-                  // Handle search logic here
-                  print('Searching for: $value');
+                  // Call the search function when the user submits the text
+                  _searchLocation(value);
                 },
               ),
             ),
@@ -90,8 +139,7 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
               height: 120, // Reduced height
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.circular(10), // Set border radius to 10
+                borderRadius: BorderRadius.circular(10), // Set border radius to 10
                 border: Border.all(color: Colors.grey),
                 boxShadow: [
                   BoxShadow(
@@ -110,10 +158,9 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
                     icon: const Icon(Icons.add,
                         size: 24, color: Colors.black), // Reduced icon size
                     onPressed: () {
-                      _currentScale = _controller.value.getMaxScaleOnAxis();
-                      setState(() {
-                        _controller.value = _controller.value..scale(1.1);
-                      });
+                      _mapController.animateCamera(
+                        CameraUpdate.zoomIn(),
+                      );
                     },
                   ),
 
@@ -129,10 +176,9 @@ class _FloorPlanScreenState extends State<FloorPlanScreen> {
                     icon: const Icon(Icons.remove,
                         size: 24, color: Colors.black), // Reduced icon size
                     onPressed: () {
-                      _currentScale = _controller.value.getMaxScaleOnAxis();
-                      setState(() {
-                        _controller.value = _controller.value..scale(0.9);
-                      });
+                      _mapController.animateCamera(
+                        CameraUpdate.zoomOut(),
+                      );
                     },
                   ),
                 ],
