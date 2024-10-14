@@ -131,9 +131,11 @@ class _AgendaScreenState extends State<AgendaScreen> {
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {},
         ),
-        title: const Text(
-          'Agenda',
-          style: TextStyle(fontSize: 24),
+        title: const Center(
+          child: Text(
+            'Agenda',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.brown,

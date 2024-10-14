@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
 class BadgeOverlay extends StatelessWidget {
   final VoidCallback onDismiss;
 
-  const BadgeOverlay({Key? key, required this.onDismiss}) : super(key: key);
+  const BadgeOverlay({super.key, required this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
@@ -374,7 +374,7 @@ class BadgeOverlay extends StatelessWidget {
           Center(
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: MediaQuery.of(context).size.height * 0.7,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -403,66 +403,76 @@ class BadgeOverlay extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Container(
-                      margin: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0xFFBF6336),
-                            Color(0xFF0D7460),
-                          ],
+                    child: SingleChildScrollView(
+                      child: Container(
+                        margin: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFFBF6336),
+                              Color(0xFF0D7460),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'TECHNICAL \n CHAIRMAN',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'TECHNICAL \n CHAIRMAN',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Image.asset(
+                                  'images/qrapp.png',
+                                  height: 200,
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                'Sharul A. Rashid',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Group Technical Authority & Custodian\n'
+                                'Engineer - Instrument & Control',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'ARAMCO',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 20),
-                          Container(
-                            decoration: BoxDecoration(color: Colors.white),
-                            child: Image.asset(
-                              'images/qrapp.png',
-                              height: 200,
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Sharul A. Rashid',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Group Technical Authority & Custodian\nEngineer - Instrument & Control',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'ARAMCO',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
