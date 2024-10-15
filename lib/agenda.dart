@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AgendaScreen extends StatefulWidget {
-  const AgendaScreen({Key? key}) : super(key: key);
+  const AgendaScreen({super.key});
 
   @override
   _AgendaScreenState createState() => _AgendaScreenState();
@@ -191,10 +191,10 @@ class DaySelector extends StatelessWidget {
   final Function(int) onDaySelected;
 
   const DaySelector({
-    Key? key,
+    super.key,
     required this.selectedDay,
     required this.onDaySelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -233,7 +233,7 @@ class SearchBar extends StatelessWidget {
       child: const TextField(
         decoration: InputDecoration(
           hintText: 'Search',
-          prefixIcon: Icon(Icons.search, color: Colors.brown),
+          prefixIcon: Icon(Icons.search, color: Colors.yellow),
           border: InputBorder.none,
         ),
       ),
@@ -288,10 +288,10 @@ class SessionCard extends StatelessWidget {
   final double avatarRadius = 56.0;
 
   const SessionCard({
-    Key? key,
+    super.key,
     required this.isExpanded,
     required this.sessionData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
