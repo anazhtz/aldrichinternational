@@ -18,7 +18,7 @@ class _SplashscreenState extends State<Splashscreen>
     super.initState();
 
     // Navigate to HomeScreen after 3 seconds
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       // Uncomment the following line to navigate to the HomeScreen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
